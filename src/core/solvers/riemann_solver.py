@@ -80,16 +80,12 @@ def _solve_wet_case(
         if h <= h_L:
             df_L = -c_L / np.sqrt(g * h * h_L)
         else:
-            df_L = np.sqrt(g / (2 * h + h_L)) * (
-                1 - (h - h_L) / (2 * (2 * h + h_L))
-            )
+            df_L = np.sqrt(g / (2 * h + h_L)) * (1 - (h - h_L) / (2 * (2 * h + h_L)))
 
         if h <= h_R:
             df_R = -c_R / np.sqrt(g * h * h_R)
         else:
-            df_R = np.sqrt(g / (2 * h + h_R)) * (
-                1 - (h - h_R) / (2 * (2 * h + h_R))
-            )
+            df_R = np.sqrt(g / (2 * h + h_R)) * (1 - (h - h_R) / (2 * (2 * h + h_R)))
 
         return float(df_L + df_R)
 
@@ -119,9 +115,14 @@ def _solve_wet_case(
     else:
         S_R = u_R + np.sqrt(g * h_R) * np.sqrt(0.5 * (h_star + h_R) / h_R)
 
-    u_star = 0.5 * (u_L + u_R) + 0.5 * (c_L - c_R) + 0.5 * (
-        2 * c_L * (1 - np.sqrt(h_star / h_L))
-        - 2 * c_R * (1 - np.sqrt(h_star / h_R))
+    u_star = (
+        0.5 * (u_L + u_R)
+        + 0.5 * (c_L - c_R)
+        + 0.5
+        * (
+            2 * c_L * (1 - np.sqrt(h_star / h_L))
+            - 2 * c_R * (1 - np.sqrt(h_star / h_R))
+        )
     )
 
     return {
@@ -215,12 +216,8 @@ def evaluate_riemann_solution(
         middle_left = (xi >= S_L) & (xi <= S_star)
         if h_star <= h_L:
             c_L = np.sqrt(g * h_L)
-            h[middle_left] = h_L * (
-                1 - 0.5 * (xi[middle_left] - u_L) / c_L
-            ) ** 2
-            u[middle_left] = u_L + c_L * (
-                1 - np.sqrt(h[middle_left] / h_L)
-            )
+            h[middle_left] = h_L * (1 - 0.5 * (xi[middle_left] - u_L) / c_L) ** 2
+            u[middle_left] = u_L + c_L * (1 - np.sqrt(h[middle_left] / h_L))
         else:
             h[middle_left] = h_star
             u[middle_left] = u_star
@@ -228,12 +225,8 @@ def evaluate_riemann_solution(
         middle_right = (xi > S_star) & (xi <= S_R)
         if h_star <= h_R:
             c_R = np.sqrt(g * h_R)
-            h[middle_right] = h_R * (
-                1 + 0.5 * (xi[middle_right] - u_R) / c_R
-            ) ** 2
-            u[middle_right] = u_R - c_R * (
-                1 - np.sqrt(h[middle_right] / h_R)
-            )
+            h[middle_right] = h_R * (1 + 0.5 * (xi[middle_right] - u_R) / c_R) ** 2
+            u[middle_right] = u_R - c_R * (1 - np.sqrt(h[middle_right] / h_R))
         else:
             h[middle_right] = h_star
             u[middle_right] = u_star

@@ -11,15 +11,16 @@ def compute_error(
     dx: float = 1.0,
 ) -> float:
     diff = np.abs(numerical - exact)
+    n = numerical.size
 
     if p == float("inf") or p == np.inf:
         return float(np.max(diff))
     elif p == 1:
-        return float(dx * np.sum(diff))
+        return float(np.sum(diff) / n)
     elif p == 2:
-        return float(np.sqrt(dx * np.sum(diff**2)))
+        return float(np.sqrt(np.sum(diff**2) / n))
     else:
-        return float((dx * np.sum(diff**p)) ** (1.0 / p))
+        return float((np.sum(diff**p) / n) ** (1.0 / p))
 
 
 def compute_all_errors(

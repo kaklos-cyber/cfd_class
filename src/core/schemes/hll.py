@@ -42,15 +42,16 @@ class HLLScheme(BaseScheme):
 
             U_new = U.copy()
             for i in range(1, nx - 1):
-                U_new[:, i] = U[:, i] - (dt / dx) * (
-                    F_half[:, i] - F_half[:, i - 1]
-                )
+                U_new[:, i] = U[:, i] - (dt / dx) * (F_half[:, i] - F_half[:, i - 1])
 
             U = self._apply_bc(U_new)
             U = self._enforce_positivity(U)
             t += dt
 
-            if len(time_history) == 0 or t >= list(time_history.keys())[-1] + snapshot_interval:
+            if (
+                len(time_history) == 0
+                or t >= list(time_history.keys())[-1] + snapshot_interval
+            ):
                 time_history[round(t, 6)] = U.copy()
 
             if progress_callback:

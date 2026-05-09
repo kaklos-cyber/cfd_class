@@ -50,7 +50,10 @@ class MacCormackScheme(BaseScheme):
             U = self._enforce_positivity(U)
             t += dt
 
-            if len(time_history) == 0 or t >= list(time_history.keys())[-1] + snapshot_interval:
+            if (
+                len(time_history) == 0
+                or t >= list(time_history.keys())[-1] + snapshot_interval
+            ):
                 time_history[round(t, 6)] = U.copy()
 
             if progress_callback:

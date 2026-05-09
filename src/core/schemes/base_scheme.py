@@ -42,9 +42,7 @@ class BaseScheme(ABC):
         return U
 
     @staticmethod
-    def _compute_flux(
-        U: NDArray[np.float64], g: float
-    ) -> NDArray[np.float64]:
+    def _compute_flux(U: NDArray[np.float64], g: float) -> NDArray[np.float64]:
         h = U[0, :]
         hu = U[1, :]
         safe_h = np.maximum(h, EPS_H)

@@ -1,6 +1,8 @@
 from src.core.schemes.base_scheme import BaseScheme
 from src.core.schemes.godunov import GodunovScheme
 from src.core.schemes.hll import HLLScheme
+
+HLLOneScheme = HLLScheme
 from src.core.schemes.lax_friedrichs import LaxFriedrichsScheme
 from src.core.schemes.lax_wendroff import LaxWendroffScheme
 from src.core.schemes.maccormack import MacCormackScheme
@@ -13,6 +15,7 @@ __all__ = [
     "MacCormackScheme",
     "GodunovScheme",
     "HLLScheme",
+    "HLLOneScheme",
     "MUSCLHancockScheme",
 ]
 

@@ -41,6 +41,7 @@ class DamBreakConfig:
             self.x_min + self.dx / 2,
             self.x_max - self.dx / 2,
             self.nx,
+            dtype=np.float64,
         )
 
     def create_initial_condition(self) -> NDArray[np.float64]:
