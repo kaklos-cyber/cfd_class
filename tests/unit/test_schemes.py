@@ -6,12 +6,6 @@
 Issue: #D2
 """
 
-import sys
-from pathlib import Path
-
-project_root = Path(__file__).parent.parent.parent
-sys.path.insert(0, str(project_root))
-
 import numpy as np
 import pytest
 
@@ -81,25 +75,19 @@ class TestSchemeCommon:
         U0[1, ~left_mask] = cfg.h_R * cfg.u_R
         return U0
 
-    @pytest.mark.parametrize("name,scheme_class", [
-        ("LaxFriedrichs", "LaxFriedrichsScheme"),
-        ("LaxWendroff", "LaxWendroffScheme"),
-        ("MacCormack", "MacCormackScheme"),
-        ("Godunov", "GodunovScheme"),
-        ("HLL", "HLLOneScheme"),
-        ("MUSCL-Hancock", "MUSCLHancockScheme"),
+    @pytest.mark.parametrize("scheme_name", [
+        "LaxFriedrichs", "LaxWendroff", "MacCormack",
+        "Godunov", "HLL", "MUSCL-Hancock"
     ])
-    def test_tc_sch_03_instantiation(self, name, scheme_class):
+    def test_tc_sch_03_instantiation(self, scheme_name):
         """TC-SCH-01: 类实例化正确设置属性."""
-        try:
-            cls = getattr(__import__("src.core.schemes", fromlist=[scheme_class]), scheme_class)
-        except (ImportError, AttributeError):
-            pytest.skip(f"{scheme_class} 尚未实现")
-        scheme = cls()
+        if scheme_name not in self.schemes:
+            pytest.skip(f"{scheme_name} 尚未实现")
+        scheme = self.schemes[scheme_name]()
         assert hasattr(scheme, "name")
         assert hasattr(scheme, "order")
         assert hasattr(scheme, "tvd")
-        assert scheme.name == name
+        assert scheme.name == scheme_name
 
     @pytest.mark.parametrize("scheme_name", [
         "LaxFriedrichs", "LaxWendroff", "MacCormack",

@@ -6,12 +6,6 @@
 Issue: #D2
 """
 
-import sys
-from pathlib import Path
-
-project_root = Path(__file__).parent.parent.parent
-sys.path.insert(0, str(project_root))
-
 import numpy as np
 import pytest
 
@@ -110,7 +104,7 @@ class TestDamBreakConfig:
     def test_tc_cfg_10_frozen_immutability(self):
         """TC-CFG-09: frozen不可变性 尝试修改属性报错."""
         cfg = self.DamBreakConfig()
-        with pytest.raises((AttributeError, TypeError, FrozenInstanceError)):
+        with pytest.raises((AttributeError, TypeError)):
             cfg.h_L = 2.0
 
     def test_tc_cfg_11_extreme_values(self):
@@ -146,5 +140,4 @@ class TestDamBreakConfig:
         assert "DamBreakConfig" in r or "h_L" in r
 
 
-class FrozenInstanceError(Exception):
-    pass
+

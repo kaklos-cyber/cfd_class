@@ -5,19 +5,15 @@ Pytest 全局配置和共享 fixtures
 角色: @QA
 """
 
-from typing import Callable, Dict, List, Optional
+import sys
+from pathlib import Path
 
 import numpy as np
 import pytest
-from numpy.typing import NDArray
-
 
 # ---------------------------------------------------------------------------
 # 路径配置
 # ---------------------------------------------------------------------------
-import sys
-from pathlib import Path
-
 project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root))
 
