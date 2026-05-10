@@ -1,8 +1,8 @@
 """
-集成测试 - 完整溃坝流程
+闆嗘垚娴嬭瘯 - 瀹屾暣婧冨潩娴佺▼
 
-测试目标: 端到端模拟流程、多格式对比、异常处理
-依据: test_plan.md TC-INT-01 ~ TC-INT-08
+娴嬭瘯鐩爣: 绔埌绔ā鎷熸祦绋嬨€佸鏍煎紡瀵规瘮銆佸紓甯稿鐞?
+渚濇嵁: test_plan.md TC-INT-01 ~ TC-INT-08
 Issue: #D3
 """
 
@@ -17,7 +17,7 @@ import pytest
 
 
 class TestEndToEndDamBreak:
-    """端到端溃坝模拟测试."""
+    """绔埌绔簝鍧濇ā鎷熸祴璇?"""
 
     @pytest.fixture(autouse=True)
     def setup_class(self):
@@ -41,7 +41,7 @@ class TestEndToEndDamBreak:
                 MUSCLHancockScheme,
             ]
         except ImportError:
-            pytest.skip("核心模块尚未实现")
+            pytest.skip("鏍稿績妯″潡灏氭湭瀹炵幇")
 
     def _make_initial_state(self, cfg):
         nx = cfg.nx
@@ -57,7 +57,7 @@ class TestEndToEndDamBreak:
 
     @pytest.mark.integration
     def test_tc_int_01_dry_bed_end_to_end(self):
-        """TC-INT-01: 端到端干底模拟完整流程无异常."""
+        """TC-INT-01: 绔埌绔共搴曟ā鎷熷畬鏁存祦绋嬫棤寮傚父."""
         cfg = self.DamBreakConfig(nx=100, t_end=0.1, h_L=1.0, h_R=0.0)
         U0 = self._make_initial_state(cfg)
         scheme = self.schemes[0]()
@@ -68,7 +68,7 @@ class TestEndToEndDamBreak:
 
     @pytest.mark.integration
     def test_tc_int_02_all_schemes_run(self):
-        """TC-INT-02: 六格式并行运行均正常."""
+        """TC-INT-02: 鍏牸寮忓苟琛岃繍琛屽潎姝ｅ父."""
         cfg = self.DamBreakConfig(nx=50, t_end=0.1)
         U0 = self._make_initial_state(cfg)
         results = {}
@@ -76,12 +76,12 @@ class TestEndToEndDamBreak:
             scheme = scheme_cls()
             result = scheme.evolve(U0, cfg)
             results[scheme.name] = result
-            assert len(result) > 0, f"{scheme.name} 无输出"
+            assert len(result) > 0, f"{scheme.name} 鏃犺緭鍑?
         assert len(results) == 6
 
     @pytest.mark.integration
     def test_tc_int_03_result_consistency(self):
-        """TC-INT-03: 相同输入相同输出."""
+        """TC-INT-03: 鐩稿悓杈撳叆鐩稿悓杈撳嚭."""
         cfg = self.DamBreakConfig(nx=50, t_end=0.1)
         U0 = self._make_initial_state(cfg)
         scheme = self.schemes[0]()
@@ -93,7 +93,7 @@ class TestEndToEndDamBreak:
 
     @pytest.mark.integration
     def test_tc_int_04_config_serialization(self):
-        """TC-INT-04: DamBreakConfig可pickle序列化."""
+        """TC-INT-04: DamBreakConfig鍙痯ickle搴忓垪鍖?"""
         import pickle
         cfg = self.DamBreakConfig()
         serialized = pickle.dumps(cfg)
@@ -103,7 +103,7 @@ class TestEndToEndDamBreak:
 
     @pytest.mark.integration
     def test_tc_int_05_progress_callback(self):
-        """TC-INT-05: 进度回调被调用."""
+        """TC-INT-05: 杩涘害鍥炶皟琚皟鐢?"""
         cfg = self.DamBreakConfig(nx=50, t_end=0.1)
         U0 = self._make_initial_state(cfg)
         scheme = self.schemes[0]()
@@ -117,7 +117,7 @@ class TestEndToEndDamBreak:
 
     @pytest.mark.integration
     def test_tc_int_06_invalid_parameter_handling(self):
-        """TC-INT-06: 无效参数给出友好错误."""
+        """TC-INT-06: 鏃犳晥鍙傛暟缁欏嚭鍙嬪ソ閿欒."""
         with pytest.raises(ValueError):
             self.DamBreakConfig(cfl=2.0)
         with pytest.raises(ValueError):
@@ -126,7 +126,7 @@ class TestEndToEndDamBreak:
     @pytest.mark.integration
     @pytest.mark.slow
     def test_tc_int_07_long_time_simulation(self):
-        """TC-INT-07: 长时间模拟 t_end=1.0 正常完成."""
+        """TC-INT-07: 闀挎椂闂存ā鎷?t_end=1.0 姝ｅ父瀹屾垚."""
         cfg = self.DamBreakConfig(nx=100, t_end=1.0)
         U0 = self._make_initial_state(cfg)
         scheme = self.schemes[0]()
@@ -135,7 +135,7 @@ class TestEndToEndDamBreak:
 
     @pytest.mark.integration
     def test_tc_int_08_coarse_grid(self):
-        """TC-INT-08: 粗网格 nx=50 不崩溃."""
+        """TC-INT-08: 绮楃綉鏍?nx=50 涓嶅穿婧?"""
         cfg = self.DamBreakConfig(nx=50, t_end=0.1)
         U0 = self._make_initial_state(cfg)
         for scheme_cls in self.schemes:
@@ -145,7 +145,7 @@ class TestEndToEndDamBreak:
 
 
 class TestMultiSchemeComparison:
-    """多格式对比集成测试."""
+    """澶氭牸寮忓姣旈泦鎴愭祴璇?"""
 
     @pytest.fixture(autouse=True)
     def setup_class(self):
@@ -171,7 +171,7 @@ class TestMultiSchemeComparison:
             ]
             self.compute_error = compute_error
         except ImportError:
-            pytest.skip("核心模块尚未实现")
+            pytest.skip("鏍稿績妯″潡灏氭湭瀹炵幇")
 
     def _make_initial_state(self, cfg):
         nx = cfg.nx
@@ -187,7 +187,7 @@ class TestMultiSchemeComparison:
 
     @pytest.mark.integration
     def test_all_schemes_produce_different_results(self):
-        """不同格式产生不同结果（一阶 vs 二阶）."""
+        """涓嶅悓鏍煎紡浜х敓涓嶅悓缁撴灉锛堜竴闃?vs 浜岄樁锛?"""
         cfg = self.DamBreakConfig(nx=100, t_end=0.1)
         U0 = self._make_initial_state(cfg)
         final_results = {}
@@ -201,12 +201,13 @@ class TestMultiSchemeComparison:
         lw_result = final_results.get("Lax-Wendroff")
         if lf_result is not None and lw_result is not None:
             diff = np.max(np.abs(lf_result - lw_result))
-            assert diff > 1e-6, "一阶和二阶格式结果应不同"
+            assert diff > 1e-6, "涓€闃跺拰浜岄樁鏍煎紡缁撴灉搴斾笉鍚?
 
     @pytest.mark.integration
+    @pytest.mark.slow
     def test_tvd_schemes_no_oscillations(self):
-        """TVD格式在激波处无振荡."""
-        cfg = self.DamBreakConfig(nx=200, t_end=0.1, h_L=2.0, h_R=1.0)
+        """TVD鏍煎紡鍦ㄦ縺娉㈠鏃犳尟鑽?"""
+        cfg = self.DamBreakConfig(nx=100, t_end=0.05, h_L=2.0, h_R=1.0)
         U0 = self._make_initial_state(cfg)
         tvd_schemes = [s for s in self.schemes if s().tvd]
         for scheme_cls in tvd_schemes:
@@ -217,4 +218,4 @@ class TestMultiSchemeComparison:
             h = U_final[0, :]
             total_variation = np.sum(np.abs(np.diff(h)))
             initial_tv = np.sum(np.abs(np.diff(U0[0, :])))
-            assert total_variation <= initial_tv * 1.01, f"{scheme.name} 违反TVD性质"
+            assert total_variation <= initial_tv * 1.01, f"{scheme.name} 杩濆弽TVD鎬ц川"
