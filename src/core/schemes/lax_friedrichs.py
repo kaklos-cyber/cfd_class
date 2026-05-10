@@ -9,7 +9,7 @@ from src.core.schemes.base_scheme import BaseScheme
 
 class LaxFriedrichsScheme(BaseScheme):
     def __init__(self) -> None:
-        super().__init__(name="LaxFriedrichs", order=1, tvd=True)
+        super().__init__(name="Lax-Friedrichs", order=1, tvd=True)
 
     def evolve(
         self,
@@ -18,7 +18,7 @@ class LaxFriedrichsScheme(BaseScheme):
         progress_callback: Optional[Callable[[float, float], None]] = None,
     ) -> Dict[float, NDArray[np.float64]]:
         U = U0.copy()
-        nx = config.nx
+        nx = config.x
         dx = config.dx
         g = config.g
 
