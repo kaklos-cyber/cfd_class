@@ -1,10 +1,13 @@
-# Analysis tools package
-"""
-分析工具包
+from src.core.analysis.error_analysis import (
+    compute_all_errors,
+    compute_error,
+    compute_mass_conservation_error,
+    estimate_order,
+)
 
-功能：
-- 误差度量（L1, L2, L∞范数）
-- 收敛阶估计
-"""
-
-__all__ = []
+__all__ = [
+    "compute_error",
+    "compute_all_errors",
+    "estimate_order",
+    "compute_mass_conservation_error",
+]
