@@ -234,3 +234,32 @@ class BaseScheme(ABC):
             u=np.array(u_history, dtype=np.float64),
             snapshots=snapshots,
         )
+
+    def evolve(self, config):
+        """Evolve simulation from config object (frontend-compatible API).
+
+        Accepts a DamBreakConfig and returns results in dict format
+        compatible with the frontend engine's expected interface.
+
+        Args:
+            config: DamBreakConfig instance with all simulation parameters
+
+        Returns:
+            Dict mapping time values to (h, u) result arrays,
+            compatible with frontend's result[time_key] access pattern
+        """
+        h0, u0 = config.initial_condition()
+        sim_result = self.run_simulation(
+            h0=h0,
+            u0=u0,
+            cfl=config.cfl,
+            dx=config.dx,
+            t_end=config.t_end,
+        )
+        result_dict = {}
+        for i, t_val in enumerate(sim_result.t):
+            result_dict[float(t_val)] = np.vstack([
+                sim_result.h[i],
+                sim_result.u[i],
+            ])
+        return result_dict
