@@ -45,7 +45,18 @@ class SimulationEngine:
             from src.core.schemes import get_scheme
 
             # 创建配置
-            self.config = DamBreakConfig(**params)
+            _param_map = {
+                "L": "domain_length", "h_L": "h_l", "h_R": "h_r",
+                "u_L": "u_l", "u_R": "u_r",
+            }
+            _valid = frozenset(DamBreakConfig.__dataclass_fields__)
+            mapped_params = {}
+            for k, v in params.items():
+                mapped_key = _param_map.get(k, k)
+                if mapped_key in _valid:
+                    mapped_params[mapped_key] = v
+
+            self.config = DamBreakConfig(**mapped_params)
 
             results = {
                 "config": self.config,
@@ -145,11 +156,11 @@ class SimulationEngine:
             return {}
 
         return {
-            "domain_length": self.config.L,
+            "domain_length": self.config.domain_length,
             "grid_points": self.config.nx,
             "dam_position": self.config.x_dam,
-            "left_depth": self.config.h_L,
-            "right_depth": self.config.h_R,
+            "left_depth": self.config.h_l,
+            "right_depth": self.config.h_r,
             "gravity": self.config.g,
             "end_time": self.config.t_end,
             "cfl": self.config.cfl,
