@@ -5,10 +5,13 @@ ensuring consistent structure and interface across implementations.
 """
 
 from abc import ABC, abstractmethod
-from typing import Dict, Optional, Callable
+from typing import Dict, Optional, Callable, TYPE_CHECKING
 
 import numpy as np
 from numpy.typing import NDArray
+
+if TYPE_CHECKING:
+    from src.core.config import DamBreakConfig
 
 
 class SimulationResult:
@@ -234,3 +237,47 @@ class BaseScheme(ABC):
             u=np.array(u_history, dtype=np.float64),
             snapshots=snapshots,
         )
+
+    def evolve(
+        self,
+        config: "DamBreakConfig",
+        progress_callback: Optional[Callable[[float], None]] = None,
+    ) -> Dict[float, NDArray[np.float64]]:
+        """Run simulation from a DamBreakConfig and return frontend-friendly output.
+
+        Convenience method that accepts a DamBreakConfig object and returns
+        results as a dictionary mapping time values to stacked [h; u] arrays.
+
+        Args:
+            config: DamBreakConfig with simulation parameters
+            progress_callback: Optional callback(t_progress) for progress reporting
+
+        Returns:
+            Dictionary of {time_float: np.ndarray(shape=(2, nx))}
+            where array[0] = water depth h, array[1] = velocity u
+
+        Example:
+            >>> from src.core.config import DamBreakConfig
+            >>> from src.core.schemes import HLLScheme
+            >>> config = DamBreakConfig(nx=100, t_end=10.0)
+            >>> scheme = HLLScheme()
+            >>> result = scheme.evolve(config)
+            >>> for t, data in result.items():
+            ...     h = data[0]  # water depth
+            ...     u = data[1]  # velocity
+        """
+        h0, u0 = config.initial_condition()
+        sim = self.run_simulation(
+            h0,
+            u0,
+            config.cfl,
+            config.dx,
+            config.t_end,
+            progress_callback=progress_callback,
+        )
+
+        result: Dict[float, NDArray[np.float64]] = {}
+        for i, t in enumerate(sim.t):
+            result[float(t)] = np.vstack([sim.h[i], sim.u[i]])
+
+        return result
