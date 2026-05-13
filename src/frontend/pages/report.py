@@ -81,7 +81,9 @@ def main():
                     from src.core.config import DamBreakConfig
                     from src.core.schemes import get_scheme
 
-                    config = DamBreakConfig(**params)
+                    _valid = frozenset(DamBreakConfig.__dataclass_fields__)
+                    _cfg = {k: v for k, v in params.items() if k in _valid}
+                    config = DamBreakConfig(**_cfg)
 
                     # 运行模拟
                     results = {}

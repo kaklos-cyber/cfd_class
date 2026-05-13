@@ -42,17 +42,16 @@ def get_scheme(name: str):
 class TestNoSelfImportRegression:
     """Prevent self-import circular dependency regression."""
 
-    def test_pages_init_has_from_pages_import_bug(self):
-        """BUG: pages/__init__.py has 'from .pages import *' circular import."""
+    def test_pages_init_no_circular_import(self):
+        """FIXED: pages/__init__.py no longer has circular import."""
         pages_init = Path("src/frontend/pages/__init__.py")
         if not pages_init.exists():
             pytest.skip("pages/__init__.py not found")
 
         content = pages_init.read_text()
 
-        # Document the known bug
-        assert "from .pages import" in content, (
-            "BUG NOT FOUND: Expected circular import in pages/__init__.py"
+        assert "from .pages import" not in content, (
+            "REGRESSION: pages/__init__.py contains circular import"
         )
 
 
@@ -168,12 +167,12 @@ class TestExactSolverRegression:
 class TestSchemeMethodRegression:
     """Prevent scheme method regression."""
 
-    def test_scheme_has_run_simulation_not_evolve(self):
-        """REGRESSION: Frontend called evolve(), backend had run_simulation()."""
+    def test_scheme_has_both_methods(self):
+        """FIXED: Scheme now has both run_simulation() and evolve()."""
         scheme = get_scheme("Lax-Friedrichs")
 
         assert hasattr(scheme, "run_simulation")
-        assert not hasattr(scheme, "evolve")
+        assert hasattr(scheme, "evolve")
 
     def test_scheme_run_simulation_signature(self):
         """Verify run_simulation signature."""

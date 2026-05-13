@@ -371,58 +371,64 @@ class TestDataShapeConsistency:
             assert isinstance(h_snap, np.ndarray)
 
 
-class TestFrontendBackendMismatches:
-    """Explicitly test known frontend-backend mismatches."""
+class TestFrontendBackendCompatibility:
+    """Test that frontend-backend API mismatches have been fixed."""
 
-    def test_frontend_hll_class_name_mismatch(self):
-        """BUG: Frontend imports HLL, backend has HLLSolver."""
-        with pytest.raises(ImportError):
-            from src.core.schemes import HLL
+    def test_frontend_hll_class_name_fixed(self):
+        """FIXED: Frontend can now import HLL alias."""
+        from src.core.schemes import HLL
+        assert HLL is not None
+        scheme = HLL()
+        assert scheme is not None
 
-    def test_frontend_godunov_class_name_mismatch(self):
-        """BUG: Frontend imports Godunov, backend has GodunovScheme."""
-        with pytest.raises(ImportError):
-            from src.core.schemes import Godunov
+    def test_frontend_godunov_class_name_fixed(self):
+        """FIXED: Frontend can now import Godunov alias."""
+        from src.core.schemes import Godunov
+        assert Godunov is not None
+        scheme = Godunov()
+        assert scheme is not None
 
-    def test_frontend_muscl_class_name_mismatch(self):
-        """BUG: Frontend imports MUSCLHancock, backend has MUSCLScheme."""
-        with pytest.raises(ImportError):
-            from src.core.schemes import MUSCLHancock
+    def test_frontend_muscl_class_name_fixed(self):
+        """FIXED: Frontend can now import MUSCLHancock alias."""
+        from src.core.schemes import MUSCLHancock
+        assert MUSCLHancock is not None
+        scheme = MUSCLHancock()
+        assert scheme is not None
 
-    def test_frontend_evolve_method_mismatch(self):
-        """BUG: Frontend calls evolve(), backend has run_simulation()."""
+    def test_frontend_evolve_method_fixed(self):
+        """FIXED: Scheme now has evolve() method."""
         config = DamBreakConfig(nx=50)
         scheme = get_scheme("Lax-Friedrichs")
 
-        assert not hasattr(scheme, "evolve")
-        assert hasattr(scheme, "run_simulation")
+        assert hasattr(scheme, "evolve")
+        assert callable(getattr(scheme, "evolve"))
 
-    def test_frontend_exactriemann_class_mismatch(self):
-        """BUG: Frontend imports ExactRiemann, backend has ExactRiemannSolver."""
-        with pytest.raises(ImportError):
-            from src.core.solvers.exact_riemann import ExactRiemann
+    def test_frontend_exactriemann_class_fixed(self):
+        """FIXED: Frontend can now import ExactRiemann."""
+        from src.core.solvers.exact_riemann import ExactRiemann
+        assert ExactRiemann is not None
 
-    def test_frontend_param_l_mismatch(self):
-        """BUG: Frontend uses 'L', backend uses 'domain_length'."""
+    def test_frontend_param_l_still_rejected(self):
+        """Backend still rejects 'L', frontend must map to 'domain_length'."""
         with pytest.raises(TypeError):
             DamBreakConfig(L=10.0)
 
-    def test_frontend_param_h_l_mismatch(self):
-        """BUG: Frontend uses 'h_L', backend uses 'h_l'."""
+    def test_frontend_param_h_l_still_rejected(self):
+        """Backend still rejects 'h_L', frontend must map to 'h_l'."""
         with pytest.raises(TypeError):
             DamBreakConfig(h_L=10.0)
 
-    def test_frontend_param_h_r_mismatch(self):
-        """BUG: Frontend uses 'h_R', backend uses 'h_r'."""
+    def test_frontend_param_h_r_still_rejected(self):
+        """Backend still rejects 'h_R', frontend must map to 'h_r'."""
         with pytest.raises(TypeError):
             DamBreakConfig(h_R=1.0)
 
-    def test_frontend_param_u_l_mismatch(self):
-        """BUG: Frontend uses 'u_L', backend uses 'u_l'."""
+    def test_frontend_param_u_l_still_rejected(self):
+        """Backend still rejects 'u_L', frontend must map to 'u_l'."""
         with pytest.raises(TypeError):
             DamBreakConfig(u_L=0.0)
 
-    def test_frontend_param_u_r_mismatch(self):
-        """BUG: Frontend uses 'u_R', backend uses 'u_r'."""
+    def test_frontend_param_u_r_still_rejected(self):
+        """Backend still rejects 'u_R', frontend must map to 'u_r'."""
         with pytest.raises(TypeError):
             DamBreakConfig(u_R=0.0)
