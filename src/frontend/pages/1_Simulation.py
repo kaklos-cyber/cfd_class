@@ -240,18 +240,26 @@ def run_simulation(params: Dict[str, Any], schemes: list) -> Optional[Dict]:
             from src.core.config import DamBreakConfig
             from src.core.schemes import get_scheme
 
+            _param_map = {
+                "L": "domain_length", "h_L": "h_l", "h_R": "h_r",
+                "u_L": "u_l", "u_R": "u_r",
+            }
+            mapped_params = {}
+            for k, v in params.items():
+                mapped_params[_param_map.get(k, k)] = v
+
             config = DamBreakConfig(
-                domain_length=params["domain_length"],
-                nx=params["nx"],
-                x_dam=params["x_dam"],
-                h_l=params["h_l"],
-                h_r=params["h_r"],
-                u_l=params["u_l"],
-                u_r=params["u_r"],
-                g=params["g"],
-                t_end=params["t_end"],
-                cfl=params["cfl"],
-                boundary_type=params.get("boundary_type", "transmissive"),
+                domain_length=mapped_params.get("domain_length", 10.0),
+                nx=mapped_params.get("nx", 200),
+                x_dam=mapped_params.get("x_dam", 5.0),
+                h_l=mapped_params.get("h_l", 2.0),
+                h_r=mapped_params.get("h_r", 1.0),
+                u_l=mapped_params.get("u_l", 0.0),
+                u_r=mapped_params.get("u_r", 0.0),
+                g=mapped_params.get("g", 9.81),
+                t_end=mapped_params.get("t_end", 1.0),
+                cfl=mapped_params.get("cfl", 0.5),
+                boundary_type=mapped_params.get("boundary_type", "transmissive"),
             )
 
             results = {}

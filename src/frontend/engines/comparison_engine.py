@@ -35,7 +35,18 @@ class ComparisonEngine:
             from src.core.config import DamBreakConfig
             from src.core.schemes import get_scheme
 
-            self.config = DamBreakConfig(**params)
+            _param_map = {
+                "L": "domain_length", "h_L": "h_l", "h_R": "h_r",
+                "u_L": "u_l", "u_R": "u_r",
+            }
+            _valid = frozenset(DamBreakConfig.__dataclass_fields__)
+            mapped_params = {}
+            for k, v in params.items():
+                mapped_key = _param_map.get(k, k)
+                if mapped_key in _valid:
+                    mapped_params[mapped_key] = v
+
+            self.config = DamBreakConfig(**mapped_params)
 
             results = {
                 "config": self.config,
