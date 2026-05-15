@@ -5,12 +5,21 @@
 </p>
 
 <p align="center">
+  <img src="https://img.shields.io/badge/version-v0.1.0--alpha.1-blue" alt="Version">
+  <img src="https://img.shields.io/badge/python-3.10%2B-blue" alt="Python">
+  <img src="https://img.shields.io/badge/license-MIT-green" alt="License">
+  <img src="https://img.shields.io/badge/GB/T-8567--2006%20%7C%209385--2008%20%7C%209386--2008-orange" alt="GB/T Standard">
+  <img src="https://img.shields.io/badge/status-Alpha-yellow" alt="Status">
+</p>
+
+<p align="center">
   <a href="#-项目简介">简介</a> •
   <a href="#-功能特性">特性</a> •
   <a href="#-快速开始">快速开始</a> •
+  <a href="#-文档索引">文档</a> •
   <a href="#-团队成员">团队</a> •
   <a href="#-目录结构">结构</a> •
-  <a href="#-开发规范">规范</a>
+  <a href="#-开发规范">规范</a> •
   <a href="#-license">License</a>
 </p>
 
@@ -65,11 +74,15 @@
 
 ### 环境要求
 
-- Python >= 3.10 (推荐 3.10 或 3.11)
-- pip 包管理器
-- Git 版本控制
+| 依赖项 | 最低版本 | 推荐版本 |
+|--------|---------|---------|
+| Python | 3.10 | 3.10 或 3.11 |
+| pip | 23.0 | 最新版 |
+| Git | 2.30 | 最新版 |
 
 ### 安装步骤
+
+#### 方式一：源码安装（推荐开发者）
 
 ```bash
 # 1. 克隆仓库
@@ -77,18 +90,25 @@ git clone https://github.com/kaklos-cyber/cfd_class.git
 cd cfd_class
 
 # 2. 创建虚拟环境（推荐）
-python -m venv venv
-source venv/bin/activate  # Linux/Mac
-venv\Scripts\activate     # Windows
+python -m venv .venv
+source .venv/bin/activate  # Linux/Mac
+# .venv\Scripts\activate   # Windows
 
 # 3. 安装依赖
 pip install -r requirements.txt
 
-# 4. 运行应用
-streamlit run src/frontend/app.py
+# 4. 验证安装
+python -c "import src; print('CFD-Class 安装成功')"
 ```
 
-### Docker方式（可选）
+#### 方式二：开发模式安装
+
+```bash
+# 在虚拟环境激活状态下
+pip install -e ".[dev,docs]"
+```
+
+#### 方式三：Docker方式（可选，待后续版本支持）
 
 ```bash
 docker build -t cfd-class .
@@ -96,6 +116,22 @@ docker run -p 8501:8501 cfd-class
 ```
 
 访问 http://localhost:8501 查看应用。
+
+### 常用命令
+
+本项目提供 `Makefile` 封装常用开发命令：
+
+```bash
+make install    # 安装项目依赖
+make test       # 运行测试套件
+make lint       # 执行代码检查
+make build      # 构建Python包
+make docs       # 生成文档
+make clean      # 清理构建产物
+make run        # 运行应用
+```
+
+详见 [Makefile](./Makefile) 了解全部可用命令。
 
 ---
 
@@ -175,30 +211,56 @@ type(scope): description
 
 ## 📊 项目进度
 
-当前版本: **v0.1.0-alpha** (初始化阶段)
+当前版本: **v0.1.0-alpha.1** (Foundation)
 
 | 阶段 | 内容 | 状态 | 完成度 |
 |------|------|------|--------|
-| Phase 0 | 仓库初始化与标准建立 | ✅ 进行中 | 90% |
+| Phase 0 | 仓库初始化与标准建立 | ✅ 已完成 | 100% |
 | Phase 1 | 核心算法实现 (6种格式) | ⏳ 待开始 | 0% |
 | Phase 2 | Streamlit UI开发 (4页面) | ⏳ 待开始 | 0% |
 | Phase 3 | 动画与报告引擎 | ⏳ 待开始 | 0% |
 | Phase 4 | 测试与文档完善 | ⏳ 待开始 | 0% |
 | Phase 5 | 打包交付 | ⏳ 待开始 | 0% |
 
-详细需求规格见 [SRS.md](./docs/requirements/SRS.md)。
+详细需求规格见 [SRS.md](./docs/requirements/SRS.md)，版本历史见 [version_history.md](./docs/maintenance/version_history.md)。
 
 ---
 
-## 📄 相关文档
+## 📚 文档索引
 
-| 文档 | 说明 | 国标依据 |
-|------|------|---------|
-| [SRS.md](./docs/requirements/SRS.md) | 软件需求规格说明书 | GB/T 9385-2008 |
-| [SDD.md](./docs/design/SDD.md) | 概要设计说明书 | GB/T 8567 |
-| [architecture.md](./docs/design/architecture.md) | 架构设计详细文档 | 自定义 |
-| [user_manual.md](./docs/user/user_manual.md) | 用户操作手册 | GB/T 8567 |
-| [test_plan.md](./docs/test/test_plan.md) | 测试计划 | GB/T 9386-2008 |
+### GB/T标准文档
+
+| 文档 | 路径 | 说明 | 国标依据 |
+|------|------|------|---------|
+| 软件需求规格说明书 | [docs/requirements/SRS.md](./docs/requirements/SRS.md) | 完整功能需求、非功能需求、验收标准 | GB/T 9385-2008 |
+| 概要设计说明书 | [docs/design/SDD.md](./docs/design/SDD.md) | 系统架构、模块划分、接口设计 | GB/T 8567-2006 |
+| 架构设计详细文档 | [docs/design/architecture.md](./docs/design/architecture.md) | 详细架构设计、技术选型 | 自定义 |
+| 用户操作手册 | [docs/user/user_manual.md](./docs/user/user_manual.md) | 完整用户操作指南 | GB/T 8567-2006 |
+| 测试计划 | [docs/test/test_plan.md](./docs/test/test_plan.md) | 测试策略、用例设计、通过标准 | GB/T 9386-2008 |
+
+### 项目规范文档
+
+| 文档 | 路径 | 说明 |
+|------|------|------|
+| 产品交付规范 | [PRODUCT_DELIVERY_STANDARD.md](./PRODUCT_DELIVERY_STANDARD.md) | GB/T产品交付标准与流程 |
+| 产品交付清单 | [DELIVERY_CHECKLIST.md](./DELIVERY_CHECKLIST.md) | 全部交付物清单与状态跟踪 |
+| 发布说明 | [RELEASE_NOTES.md](./RELEASE_NOTES.md) | v0.1.0-alpha.1 版本发布说明 |
+| 贡献者指南 | [CONTRIBUTING.md](./CONTRIBUTING.md) | 分支策略、Commit规范、PR流程 |
+| GitHub协作指南 | [GITHUB_COLLABORATION_GUIDE.md](./GITHUB_COLLABORATION_GUIDE.md) | 团队协同工作流指南 |
+
+### 用户文档
+
+| 文档 | 路径 | 说明 |
+|------|------|------|
+| 快速入门指南 | [docs/user/quick_start.md](./docs/user/quick_start.md) | 5分钟上手指南 |
+| 理论背景指南 | [docs/user/theory_guide.md](./docs/user/theory_guide.md) | 浅水方程与数值方法理论 |
+
+### 维护文档
+
+| 文档 | 路径 | 说明 |
+|------|------|------|
+| 变更日志 | [docs/maintenance/changelog.md](./docs/maintenance/changelog.md) | 详细变更记录 |
+| 版本历史 | [docs/maintenance/version_history.md](./docs/maintenance/version_history.md) | 版本号规范、发布记录、路线图 |
 
 ---
 

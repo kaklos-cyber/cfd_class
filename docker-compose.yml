@@ -1,0 +1,176 @@
+# =============================================================================
+# CFD-Class Docker Compose 配置
+# =============================================================================
+# 功能: 定义开发环境的Docker服务编排
+# 用法:
+#   docker-compose up -d          启动服务（后台模式）
+#   docker-compose up               启动服务（前台模式）
+#   docker-compose down             停止并移除服务
+#   docker-compose build            重新构建镜像
+#   docker-compose logs -f          查看实时日志
+# =============================================================================
+
+version: "3.9"
+
+services:
+  # ---------------------------------------------------------------------------
+  # Streamlit应用服务
+  # ---------------------------------------------------------------------------
+  app:
+    # 构建配置
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: development
+      args:
+        - PYTHON_VERSION=3.11
+
+    # 容器名称
+    container_name: cfd-class-app
+
+    # 镜像标签
+    image: cfd-class:dev
+
+    # 端口映射（主机端口:容器端口）
+    ports:
+      - "8501:8501"
+
+    # 卷映射（主机目录:容器目录）
+    volumes:
+      # 源码热重载映射
+      - ./src:/app/src:ro
+      # 文档目录映射
+      - ./docs:/app/docs:ro
+      # 测试目录映射
+      - ./tests:/app/tests:ro
+      # 脚本目录映射
+      - ./scripts:/app/scripts:ro
+      # 数据持久化目录（如有需要可取消注释）
+      # - ./data:/app/data
+
+    # 环境变量
+    environment:
+      - STREAMLIT_SERVER_PORT=8501
+      - STREAMLIT_SERVER_ADDRESS=0.0.0.0
+      - STREAMLIT_SERVER_HEADLESS=true
+      - STREAMLIT_SERVER_RUN_ON_SAVE=true
+      - STREAMLIT_BROWSER_GATHER_USAGE_STATS=false
+      - PYTHONUNBUFFERED=1
+      - PYTHONDONTWRITEBYTECODE=1
+
+    # 工作目录
+    working_dir: /app
+
+    # 重启策略
+    restart: unless-stopped
+
+    # 健康检查
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "python",
+          "-c",
+          "import urllib.request; urllib.request.urlopen('http://localhost:8501/_stcore/health')",
+        ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+    # 日志配置
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+    # 命令覆盖（开发模式启用自动重载）
+    command:
+      - streamlit
+      - run
+      - src/frontend/app.py
+      - --server.runOnSave=true
+
+  # ---------------------------------------------------------------------------
+  # 可选: 文档服务（Sphinx文档）
+  # ---------------------------------------------------------------------------
+  docs:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: development
+    container_name: cfd-class-docs
+    image: cfd-class:dev
+
+    # 端口映射（文档服务）
+    ports:
+      - "8080:8080"
+
+    volumes:
+      - ./docs:/app/docs:ro
+      - ./src:/app/src:ro
+
+    working_dir: /app/docs
+
+    # 文档服务命令（如配置了Sphinx）
+    command: >
+      sh -c "
+        if [ -f conf.py ] || [ -f source/conf.py ]; then
+          sphinx-autobuild . _build/html --host 0.0.0.0 --port 8080;
+        else
+          echo 'Sphinx配置未找到，文档服务未启动';
+          tail -f /dev/null;
+        fi
+      "
+
+    restart: unless-stopped
+
+    profiles:
+      - docs
+
+  # ---------------------------------------------------------------------------
+  # 可选: 测试服务
+  # ---------------------------------------------------------------------------
+  test:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: development
+    container_name: cfd-class-test
+    image: cfd-class:dev
+
+    volumes:
+      - ./src:/app/src:ro
+      - ./tests:/app/tests
+      - ./pyproject.toml:/app/pyproject.toml:ro
+
+    working_dir: /app
+
+    # 运行测试并生成覆盖率报告
+    command:
+      - pytest
+      - -v
+      - --tb=short
+      - --cov=cfd_class
+      - --cov-report=term-missing
+      - --cov-report=html:/app/tests/htmlcov
+      - tests/
+
+    profiles:
+      - test
+
+# ---------------------------------------------------------------------------
+# 网络配置
+# ---------------------------------------------------------------------------
+networks:
+  default:
+    name: cfd-class-network
+    driver: bridge
+
+# ---------------------------------------------------------------------------
+# 卷配置（命名卷持久化）
+# ---------------------------------------------------------------------------
+volumes:
+  cfd-class-data:
+    driver: local

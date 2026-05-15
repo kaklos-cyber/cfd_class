@@ -1,10 +1,10 @@
 [build-system]
 requires = ["setuptools>=68.0", "wheel"]
-build-backend = "setuptools.backends._legacy:_Backend"
+build-backend = "setuptools.build_meta"
 
 [project]
 name = "cfd-class"
-version = "0.1.0-alpha"
+version = "0.1.0-alpha.1"
 description = "CFD-Class: 符合GB/T国标的一维溃坝教学软件"
 readme = "README.md"
 license = {text = "MIT"}
@@ -52,14 +52,25 @@ report = [
     "jinja2>=3.1.0,<4.0.0",
 ]
 
+[project.scripts]
+cfd-class = "cfd_class.cli:main"
+
 [project.urls]
 Homepage = "https://github.com/kaklos-cyber/cfd_class"
 Documentation = "https://github.com/kaklos-cyber/cfd_class#readme"
 Repository = "https://github.com/kaklos-cyber/cfd_class.git"
 Issues = "https://github.com/kaklos-cyber/cfd_class/issues"
 
+[tool.setuptools]
+package-dir = {"" = "src"}
+include-package-data = true
+
 [tool.setuptools.packages.find]
 where = ["src"]
+include = ["cfd_class*"]
+
+[tool.setuptools.package-data]
+cfd_class = ["py.typed", "*.json", "*.yaml", "*.yml"]
 
 [tool.black]
 line-length = 88
