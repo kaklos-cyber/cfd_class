@@ -1,10 +1,11 @@
-# Analysis tools package
 """
 分析工具包
 
-功能：
-- 误差度量（L1, L2, L∞范数）
-- 收敛阶估计
+Features:
+- Error metrics (L1, L2, L-infinity norms)
+- Convergence order estimation
 """
 
-__all__ = []
+from src.core.analysis.errors import compute_error, estimate_order
+
+__all__ = ["compute_error", "estimate_order"]
