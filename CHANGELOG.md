@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.0-alpha.2] - 2026-05-21
+
+### Added
+- 重新打包产品交付包，版本更新为 v0.1.0-alpha.2
+- 完善软件包元数据和构建配置
+- 清理构建产物，确保干净的打包环境
+
+### Changed
+- 更新版本号至 v0.1.0-alpha.2
+- 优化 pyproject.toml 构建配置
+
 ## [0.1.0-alpha.1] - 2026-05-15
 
 ### Added

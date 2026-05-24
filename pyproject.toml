@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "cfd-class"
-version = "0.1.0-alpha.1"
+version = "0.1.0-alpha.2"
 description = "CFD-Class: 符合GB/T国标的一维溃坝教学软件"
 readme = "README.md"
 license = {text = "MIT"}
